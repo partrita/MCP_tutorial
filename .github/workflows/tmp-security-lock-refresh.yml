@@ -1,6 +1,8 @@
 name: temporary security lock refresh
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - security/dependabot-followup
 jobs:
   refresh:
     runs-on: ubuntu-latest
