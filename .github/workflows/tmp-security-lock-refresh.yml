@@ -1,0 +1,26 @@
+name: temporary security lock refresh
+on:
+  workflow_dispatch:
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+      - name: Regenerate lockfile
+        run: uv lock
+      - name: Commit lockfile
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add uv.lock
+          git commit -m "chore(security): refresh uv lockfile" || true
+          git push
+      - name: Remove temporary workflow
+        run: |
+          git rm .github/workflows/tmp-security-lock-refresh.yml
+          git commit -m "chore: remove temporary lock refresh workflow"
+          git push
